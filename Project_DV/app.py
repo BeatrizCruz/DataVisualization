@@ -6,14 +6,13 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 
-######################################################Data##############################################################
+###################################################### Data Import ##############################################################
 
 df = pd.read_csv('data/emission_full.csv')
-
+df_refugees = pd.read_csv('data/refugees.csv')
 gas_names = ['CO2_emissions', 'GHG_emissions', 'CH4_emissions','N2O_emissions', 'F_Gas_emissions']
-
 places= ['energy_emissions', 'industry_emissions',
-       'agriculture_emissions', 'waste_emissions',
+      'agriculture_emissions', 'waste_emissions',
        'land_use_foresty_emissions', 'bunker_fuels_emissions',
        'electricity_heat_emissions', 'construction_emissions',
        'transports_emissions', 'other_fuels_emissions']
@@ -23,23 +22,23 @@ places= ['energy_emissions', 'industry_emissions',
 country_options = [dict(label=country, value=country) for country in df['country_name'].unique()]
 
 gas_options = [dict(label=gas.replace('_', ' '), value=gas) for gas in gas_names]
+variable_refugee = ['Refugee population (by country/ territory of asylum)','Refugee population (by country/ territory of origin)']
+
+refugees_options = [dict(label=variable, value=variable) for variable in variable_refugee]
 
 sector_options = [dict(label=place.replace('_', ' '), value=place) for place in places]
 
 ##################################################APP###############################################################
 
 app = dash.Dash(__name__)
-
 app.layout = html.Div([
 
     html.Div([
-        html.H1('Is Polution Related with Economic Growth?'),
-        html.H4('This is not a one time thing, this is our entire future. \
-                                                            -Greta Thunberg')
+        html.H1('Refugees, a Reality that Must be Faced and Understood'),
+        html.H4('"Every day, all over the world, people make one of the most difficult decisions in their lives: to leave their homes in search of a safer, better life."')
     ], className='pretty'),
 
     html.Div([
-
         html.Div([
             dcc.Tabs(id='tabs',
                      value='tab_1',
@@ -57,8 +56,8 @@ app.layout = html.Div([
                                                                         html.Label('Gas Choice'),
                                                                         dcc.Dropdown(
                                                                             id='gas_option',
-                                                                            options=gas_options,
-                                                                            value='CO2_emissions',
+                                                                            options=refugees_options,
+                                                                            value='Refugee population (by country/ territory of origin)',
                                                                         ),
 
                                                                         html.Br(),
@@ -77,10 +76,10 @@ app.layout = html.Div([
                                                         html.Label('Year Slider'),
                                                                     dcc.Slider(
                                                                         id='year_slider',
-                                                                        min=df['year'].min(),
-                                                                        max=df['year'].max(),
-                                                                        marks={str(i): '{}'.format(str(i)) for i in [1990, 1995, 2000, 2005, 2010, 2014]},
-                                                                        value=df['year'].min(),
+                                                                        min=df_refugees['Year'].min(),
+                                                                        max=df_refugees['Year'].max(),
+                                                                        marks={str(i): '{}'.format(str(i)) for i in [2009, 2010, 2011, 2012, 2013, 2014]},
+                                                                        value=df_refugees['Year'].min(),
                                                                         step=1
                                                                     ),
 
@@ -125,62 +124,40 @@ app.layout = html.Div([
 
     html.Div([
 
-        html.Div([dcc.Graph(id='bar_graph')], className='column4 pretty'),
-
-        html.Div([dcc.Graph(id='aggregate_graph')], className='column4 pretty')
+        html.Div([dcc.Graph(id='scatter_graph')], className='column4 pretty'),
+        html.Div([dcc.Graph(id='bar_graph')], className='column4 pretty')
 
     ], className='row')
 
 ])
 
-######################################################Callbacks#########################################################
+###################################################### Callbacks #########################################################
 @app.callback(
     [
-        Output("bar_graph", "figure"),
-        Output("choropleth", "figure"),
-        Output("aggregate_graph", "figure"),
+        Output("choropleth", "figure")
     ],
     [
         Input('Button', 'n_clicks')
     ],
     [
         State("year_slider", "value"),
-        State("country_drop", "value"),
-        State("gas_option", "value"),
-        State("lin_log", "value"),
-        State("projection", "value"),
-        State("sector_options", "value")
+        State("gas_option", "value")
     ]
 )
-def plots(n_clicks, year, countries, gas, scale, projection, sector):
+def plots(n_clicks, year,  gas):
 
-    ############################################First Bar Plot##########################################################
-    data_bar = []
-    for country in countries:
-        df_bar = df.loc[(df['country_name'] == country)]
+    #############################################Choropleth######################################################
 
-        x_bar = df_bar['year']
-        y_bar = df_bar[gas]
-
-        data_bar.append(dict(type='bar', x=x_bar, y=y_bar, name=country))
-
-    layout_bar = dict(title=dict(text='Emissions from 1990 until 2015'),
-                  yaxis=dict(title='Emissions', type=['linear', 'log'][scale]),
-                  paper_bgcolor='#f9f9f9'
-                  )
-
-    #############################################Second Choropleth######################################################
-
-    df_emission_0 = df.loc[df['year'] == year]
-
+    df_emission_0 = df_refugees.loc[df_refugees['Year'] == year]
+    df_sad = df_refugees
     z = np.log(df_emission_0[gas])
 
     data_choropleth = go.Choropleth(
-                           locations=df_emission_0['country_name'],
+                           locations=df_emission_0['Country Name'],
                            # There are three ways to 'merge' your data with the data pre embedded in the map
                            locationmode='country names',
                            z=z,
-                           text=df_emission_0['country_name'],
+                           text=df_emission_0['Country Name'],
                            colorscale='RdYlGn',
                            colorbar=dict(title=dict(text=str(gas.replace('_', ' ')) + '<br> (log scaled)',
                                                     side='bottom'
@@ -204,31 +181,10 @@ def plots(n_clicks, year, countries, gas, scale, projection, sector):
                              #paper_bgcolor='#f9f9f9'
                              #)
 
-    ############################################Third Scatter Plot######################################################
 
-    df_loc = df.loc[df['country_name'].isin(countries)].groupby('year').sum().reset_index()
-
-    data_agg = []
-
-    for place in sector:
-        data_agg.append(dict(type='scatter',
-                         x=df_loc['year'].unique(),
-                         y=df_loc[place],
-                         name=place.replace('_', ' '),
-                         mode='markers'
-                         )
-                    )
-
-    layout_agg = dict(title=dict(text='Aggregate CO2 Emissions by Sector'),
-                     yaxis=dict(title=['CO2 Emissions', 'CO2 Emissions (log scaled)'][scale],
-                                type=['linear', 'log'][scale]),
-                     xaxis=dict(title='Year'),
-                     paper_bgcolor='#f9f9f9'
-                     )
-
-    return go.Figure(data=data_bar, layout=layout_bar), \
-           go.Figure(data=data_choropleth, layout=layout_choropleth),\
-           go.Figure(data=data_agg, layout=layout_agg)
+    return go.Figure(data=data_choropleth, layout=layout_choropleth),\
+           #go.Figure(data=data_bar, layout=layout_bar), \
+           #go.Figure(data=data_agg, layout=layout_agg)
 
 
 @app.callback(

@@ -5,21 +5,20 @@ body {
 
 
 h1, h2, h3, h6 {
-  text-align: center;
+  text-align: left;
   background-color: #f9f9f9;
   font-family: "Calibri"
 }
 
 h4 {
-    text-align: center;
+    text-align: left;
     font-family: "Calibri";
-    font-style: italic;
 }
 
 h5 {
     margin-left: 55%;
     text-align: left;
-    font-style: italic;
+    font-style: bold;
 }
 
 
@@ -56,3 +55,14 @@ h5 {
 .mini {
   flex: 20%;
 }
+
+.text{
+    text-align: justify;
+    font-family: "Calibri";
+}
+
+.titleLeft{
+    text-align: left;
+    font-family: "Calibri";
+}
+
