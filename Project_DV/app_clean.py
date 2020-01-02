@@ -9,13 +9,14 @@ import plotly.graph_objs as go
 # Import data set:
 df_refugees = pd.read_csv('data/refugees.csv')
 country_options = [dict(label=country, value=country) for country in df_refugees['Country Name'].unique()]
-variable_names = ['GDP per capita (current US$)', 'Health Expenditure per capita (current US$)', 'Life expectancy at birth (total years)','Military expenditure per capita (current US$)', 'Unemployment per capita','Government expenditure on education (per capita)']
-variable_refugee = ['Refugee population (by country/ territory of asylum)','Refugee population (by country/ territory of origin)']
-allVar_names=['Refugee population (by country/ territory of asylum)','Refugee population (by country/ territory of origin)','GDP per capita (current US$)', 'Health Expenditure per capita (current US$)', 'Life expectancy at birth (total years)','Military expenditure per capita (current US$)', 'Unemployment per capita','Government expenditure on education (per capita)']
+variable_names = ['GDP per capita (US$)','Population (total)', 'Health Expenditure per capita (US$)', 'Life expectancy at birth','Military expenditure per capita (US$)', 'Unemployment (% of labor force)','Education Expenditure (per capita)']
+variable_refugee = ['Refugees (asylum country)','Refugees (origin country)','Refugees per capita (by asylum country)','Refugees per capita (by origin country)']
+allVar_names=['Refugees (asylum country)','Refugees (origin country)','GDP per capita (US$)', 'Population (total)', 'Health Expenditure per capita (US$)', 'Life expectancy at birth','Military expenditure per capita (US$)', 'Unemployment (% of labor force)','Education Expenditure (per capita)']
 variable_options = [dict(label=variable, value=variable) for variable in variable_names]
 refugees_options = [dict(label=variable, value=variable) for variable in variable_refugee]
 allVar_options = [dict(label=variable, value=variable) for variable in allVar_names]
-
+toplow_names= ['All Countries','Top 5','Top 10','Top 20','Low 5','Low 10','Low 20']
+toplow_options=[dict(label=filtertop_low, value=filtertop_low) for filtertop_low in toplow_names]
 
 # App
 app = dash.Dash(__name__)
@@ -52,7 +53,7 @@ app.layout = html.Div([
                                                                                                 ], className='text')
 
                                                ]),
-                                               dcc.Tab(label='Data Information', value='tab_2', children=[
+                            dcc.Tab(label='Data Information', value='tab_2', children=[
                                                                                                 html.Div([html.H2('What is this this app about?')],className='titleLeft'),
                                                                                                 html.Div(
                                                                                                 [
@@ -71,13 +72,13 @@ app.layout = html.Div([
                                                                                                 ""
                                                                                                 ], style={ "textAlign": "center"})
                                                                                              ]),
-                                               dcc.Tab(label='Data Display', value='tab_3', children=[html.Label('Year Slider'),
+                            dcc.Tab(label='Data Display', value='tab_3', children=[html.Label('Year Slider'),
                                                                                            dcc.Slider(
                                                                                                id='year_slider',
                                                                                                min=df_refugees['Year'].min(),
                                                                                                max=df_refugees['Year'].max(),
                                                                                                marks={str(i): '{}'.format(str(i)) for i in
-                                                                                                      [2009, 2010, 2011, 2012, 2013, 2014]},
+                                                                                                      [2009, 2010, 2011, 2012, 2013, 2014,2015,2016,2017,2018]},
                                                                                                value=df_refugees['Year'].max(),
                                                                                                step=1),
                                                                                            html.Br(),
@@ -99,7 +100,7 @@ app.layout = html.Div([
                                                                                            dcc.Dropdown(
                                                                                                 id='refugee_options',
                                                                                                 options=refugees_options,
-                                                                                                value='Refugee population (by country/ territory of asylum)',
+                                                                                                value='Refugees (asylum country)',
                                                                                                 multi=False,
                                                                                                 clearable=False),
                                                                                            html.Br(),
@@ -107,10 +108,19 @@ app.layout = html.Div([
                                                                                            dcc.Dropdown(
                                                                                                 id='exp_options',
                                                                                                 options=variable_options,
-                                                                                                value='GDP per capita (current US$)',
+                                                                                                value='GDP per capita (US$)',
                                                                                                 multi=False,
                                                                                                 clearable=False
-                                                                                            )
+                                                                                            ),
+                                                                                           html.Br(),
+                                                                                           html.Label('Do you want to filter by top/ low valued countries?'),
+                                                                                           dcc.Dropdown(
+                                                                                               id='toplow_options',
+                                                                                               options=toplow_options,
+                                                                                               value='All Countries',
+                                                                                               multi=False,
+                                                                                               clearable=False
+                                                                                           )
 
                                                     ]),
                                      ]),
@@ -187,11 +197,12 @@ def indicator(countries, year):
         Input("year_slider", "value"),
         Input("refugee_options", "value"),
         Input('exp_options','value'),
-        Input('country_drop','value')
+        Input('country_drop','value'),
+        Input('toplow_options','value')
     ]
 )
 
-def plots(lin_log, year, var,exp, country):
+def plots(lin_log, year, var, exp, country,top_low):
     # Cloropleth:
     df_refugees_0 = df_refugees.loc[df_refugees['Year'] == year]
     if(lin_log==1):
@@ -200,21 +211,63 @@ def plots(lin_log, year, var,exp, country):
     else:
         z = df_refugees_0[var]
         legend = '(linear scale)'
+
+    if(top_low=='Top 5'):
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
+        countries = list(df_refugees_0.head(5)['Country Name'])
+        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+    elif(top_low=='Top 10'):
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
+        countries = list(df_refugees_0.head(10)['Country Name'])
+        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+    elif(top_low=='Top 20'):
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
+        countries = list(df_refugees_0.head(20)['Country Name'])
+        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+    elif(top_low == 'Low 5'):
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
+        countries = list(df_refugees_0.head(5)['Country Name'])
+        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+    elif (top_low == 'Low 10'):
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
+        countries = list(df_refugees_0.head(10)['Country Name'])
+        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+    elif (top_low == 'Low 20'):
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
+        countries = list(df_refugees_0.head(20)['Country Name'])
+        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+
     data_choropleth = go.Choropleth(
                            locations=df_refugees_0['Country Name'],
                            # There are three ways to 'merge' your data with the data pre embedded in the map
                            locationmode='country names',
                            z=z,
                            text=df_refugees_0['Country Name'],
-                           colorscale='RdYlGn',
-
+                           #colorscale='RdYlGn',
+                           # colorscale=[[0.0,'rgb(32, 74, 48)'], [0.0625,'rgb(44, 120, 73)'],
+                           #             [0.125,'rgb(38, 130, 39)'], [0.1875,'rgb(45, 189, 64)'],
+                           #              [0.25, 'rgb(155, 189, 45)'], [0.3125,'rgb(192, 204, 27)'],
+                           #              [0.375, 'rgb(212, 224, 36)'], [0.4375,'rgb(234, 247, 37)'],
+                           #              [0.5,'rgb(251, 255, 0)'], [0.5625,'rgb(255, 208, 0)'],
+                           #              [0.625,'rgb(255, 179, 0)'],[0.6875,'rgb(255, 153, 0)'],
+                           #              [0.75,'rgb(255, 119, 0)'],[0.8125,'rgb(255, 98, 0)'],
+                           #              [0.875,'rgb(255, 77, 0)'],[0.9375,'rgb(255, 0, 0)'],[1,'rgb(255, 0, 0)']],
+                           colorscale=[[0.0, 'rgb(44, 120, 73)'],[0.0417, 'rgb(38, 130, 39)'],
+                           #             [0.0834, 'rgb(45, 189, 64)'],[0.1251, 'rgb(155, 189, 45)'],
+                           #             [0.1668, 'rgb(234, 247, 37)'],[0.2085, 'rgb(224, 177, 36)'], #Stop
+                           #             [0.25, 'rgb(224, 152, 36)'],[0.625, 'rgb(255, 153, 0)'],[1, 'rgb(255, 0, 0)']],
+                           #colorscale=[[0.0, 'rgb(32, 74, 48)'], [0.029, 'rgb(44, 163, 90)'],
+                                        [0.058, 'rgb(52, 189, 45)'], [0.087, 'rgb(195, 214, 51)'],
+                                        [0.116, 'rgb(250, 250, 0)'], [0.145, 'rgb(224, 177, 36)'],
+                                        [0.174, 'rgb(224, 152, 36)'], [0.625, 'rgb(255, 153, 0)'], [1, 'rgb(255, 0, 0)']
+                                        ],
+                           reversescale=False,
                            colorbar=dict(title=dict(text=str(var) + '<br>'+ legend,
                                                     side='bottom'
                                                     ),
                                          x=1.02, xanchor='center'), #, , xref="container"
 
                            hovertemplate='Country: %{text} <br>' + str(var) + ': %{z}',
-
                            name=''
                            )
 
@@ -226,14 +279,15 @@ def plots(lin_log, year, var,exp, country):
     # Scatter Plot:
     data_scatter = go.Scatter(x=z,y=df_refugees_0[exp], mode='markers',text=df_refugees_0['Country Name'],
                             marker=dict(color=z, colorscale='RdYlGn', showscale=False))
-    layout_scatter = go.Layout(title=str(exp)+' by '+str(var), scene=dict(xaxis=dict(title=str(var)),
-                                                                      yaxis=dict(title=str(exp))))
+    import plotly.io as pio
+    templates = list(pio.templates)
+    print(templates)
+    layout_scatter = go.Layout(title=str(exp)+' by '+str(var), xaxis=dict(title=str(var),showgrid=True),yaxis=dict(title=str(exp),showgrid=True))
     # Bar Plot:
     df_refugees_1 = df_refugees.loc[df_refugees['Country Name'] == country]
 
     data_bar = go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[exp],mode='lines')
-    layout_bar = go.Layout(title=str(exp) + ' over years for '+country, scene=dict(xaxis=dict(title='Year'),
-                                                                                   yaxis=dict(title=exp)))
+    layout_bar = go.Layout(title=str(exp) + ' over years for '+country,  xaxis=dict(title='Year',showgrid=True), yaxis=dict(title=str(exp),showgrid=True))
     return go.Figure(data=data_choropleth, layout=layout_choropleth),\
            go.Figure(data=data_scatter, layout=layout_scatter),\
            go.Figure(data=data_bar, layout=layout_bar),

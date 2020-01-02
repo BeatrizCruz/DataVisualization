@@ -42,7 +42,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.app_clean">
-    <configuration name="app_clean" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="app_clean" type="PythonConfigurationType" factoryName="Python">
       <module name="Project_DV" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -85,14 +85,9 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.project_example" />
       <item itemvalue="Python.app_clean" />
+      <item itemvalue="Python.project_example" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.app_clean" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -127,11 +122,6 @@
           <url>file://$PROJECT_DIR$/app.py</url>
           <line>152</line>
           <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app_clean.py</url>
-          <line>233</line>
-          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
