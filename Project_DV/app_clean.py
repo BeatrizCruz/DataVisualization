@@ -53,7 +53,7 @@ app.layout = html.Div([
                                                                                                 ], className='text')
 
                                                ]),
-                            dcc.Tab(label='Data Information', value='tab_2', children=[
+                                               dcc.Tab(label='Data Information', value='tab_2', children=[
                                                                                                 html.Div([html.H2('What is this this app about?')],className='titleLeft'),
                                                                                                 html.Div(
                                                                                                 [
@@ -72,7 +72,7 @@ app.layout = html.Div([
                                                                                                 ""
                                                                                                 ], style={ "textAlign": "center"})
                                                                                              ]),
-                            dcc.Tab(label='Data Display', value='tab_3', children=[html.Label('Year Slider'),
+                                               dcc.Tab(label='Data Display', value='tab_3', children=[html.Label('Year Slider'),
                                                                                            dcc.Slider(
                                                                                                id='year_slider',
                                                                                                min=df_refugees['Year'].min(),
@@ -104,15 +104,6 @@ app.layout = html.Div([
                                                                                                 multi=False,
                                                                                                 clearable=False),
                                                                                            html.Br(),
-                                                                                           html.Label('Choose a Social-economical Variable:'),
-                                                                                           dcc.Dropdown(
-                                                                                                id='exp_options',
-                                                                                                options=variable_options,
-                                                                                                value='GDP per capita (US$)',
-                                                                                                multi=False,
-                                                                                                clearable=False
-                                                                                            ),
-                                                                                           html.Br(),
                                                                                            html.Label('Do you want to filter by top/ low valued countries?'),
                                                                                            dcc.Dropdown(
                                                                                                id='toplow_options',
@@ -120,8 +111,16 @@ app.layout = html.Div([
                                                                                                value='All Countries',
                                                                                                multi=False,
                                                                                                clearable=False
-                                                                                           )
-
+                                                                                           ),
+                                                                                           html.Br(),
+                                                                                           html.Label('Choose a Social-economical Variable:'),
+                                                                                           dcc.Dropdown(
+                                                                                                id='exp_options',
+                                                                                                options=variable_options,
+                                                                                                value='GDP per capita (US$)',
+                                                                                                multi=False,
+                                                                                                clearable=False
+                                                                                           ),
                                                     ]),
                                      ]),
 
@@ -243,25 +242,24 @@ def plots(lin_log, year, var, exp, country,top_low):
                            locationmode='country names',
                            z=z,
                            text=df_refugees_0['Country Name'],
-                           #colorscale='RdYlGn',
+                           colorscale='RdYlGn',
                            # colorscale=[[0.0,'rgb(32, 74, 48)'], [0.0625,'rgb(44, 120, 73)'],
-                           #             [0.125,'rgb(38, 130, 39)'], [0.1875,'rgb(45, 189, 64)'],
-                           #              [0.25, 'rgb(155, 189, 45)'], [0.3125,'rgb(192, 204, 27)'],
-                           #              [0.375, 'rgb(212, 224, 36)'], [0.4375,'rgb(234, 247, 37)'],
-                           #              [0.5,'rgb(251, 255, 0)'], [0.5625,'rgb(255, 208, 0)'],
-                           #              [0.625,'rgb(255, 179, 0)'],[0.6875,'rgb(255, 153, 0)'],
-                           #              [0.75,'rgb(255, 119, 0)'],[0.8125,'rgb(255, 98, 0)'],
-                           #              [0.875,'rgb(255, 77, 0)'],[0.9375,'rgb(255, 0, 0)'],[1,'rgb(255, 0, 0)']],
-                           colorscale=[[0.0, 'rgb(44, 120, 73)'],[0.0417, 'rgb(38, 130, 39)'],
+                           #              [0.125,'rgb(38, 130, 39)'], [0.1875,'rgb(45, 189, 64)'],
+                           #               [0.25, 'rgb(155, 189, 45)'], [0.3125,'rgb(192, 204, 27)'],
+                           #               [0.375, 'rgb(212, 224, 36)'], [0.4375,'rgb(234, 247, 37)'],
+                           #               [0.5,'rgb(251, 255, 0)'], [0.5625,'rgb(255, 208, 0)'],
+                           #               [0.625,'rgb(255, 179, 0)'],[0.6875,'rgb(255, 153, 0)'],
+                           #               [0.75,'rgb(255, 119, 0)'],[0.8125,'rgb(255, 98, 0)'],
+                           #               [0.875,'rgb(255, 77, 0)'],[0.9375,'rgb(255, 0, 0)'],[1,'rgb(255, 0, 0)']],
+                           # colorscale=[[0.0, 'rgb(44, 120, 73)'],[0.0417, 'rgb(38, 130, 39)'],
                            #             [0.0834, 'rgb(45, 189, 64)'],[0.1251, 'rgb(155, 189, 45)'],
                            #             [0.1668, 'rgb(234, 247, 37)'],[0.2085, 'rgb(224, 177, 36)'], #Stop
                            #             [0.25, 'rgb(224, 152, 36)'],[0.625, 'rgb(255, 153, 0)'],[1, 'rgb(255, 0, 0)']],
-                           #colorscale=[[0.0, 'rgb(32, 74, 48)'], [0.029, 'rgb(44, 163, 90)'],
-                                        [0.058, 'rgb(52, 189, 45)'], [0.087, 'rgb(195, 214, 51)'],
-                                        [0.116, 'rgb(250, 250, 0)'], [0.145, 'rgb(224, 177, 36)'],
-                                        [0.174, 'rgb(224, 152, 36)'], [0.625, 'rgb(255, 153, 0)'], [1, 'rgb(255, 0, 0)']
-                                        ],
-                           reversescale=False,
+                           # colorscale=[[0.0, 'rgb(32, 74, 48)'], [0.029, 'rgb(44, 163, 90)'],
+                           #             [0.058, 'rgb(52, 189, 45)'], [0.087, 'rgb(195, 214, 51)'],
+                           #             [0.116, 'rgb(250, 250, 0)'], [0.145, 'rgb(224, 177, 36)'],
+                           #             [0.174, 'rgb(224, 152, 36)'], [0.625, 'rgb(255, 153, 0)'], [1, 'rgb(255, 0, 0)']],
+                           reversescale=True,
                            colorbar=dict(title=dict(text=str(var) + '<br>'+ legend,
                                                     side='bottom'
                                                     ),
@@ -279,9 +277,7 @@ def plots(lin_log, year, var, exp, country,top_low):
     # Scatter Plot:
     data_scatter = go.Scatter(x=z,y=df_refugees_0[exp], mode='markers',text=df_refugees_0['Country Name'],
                             marker=dict(color=z, colorscale='RdYlGn', showscale=False))
-    import plotly.io as pio
-    templates = list(pio.templates)
-    print(templates)
+
     layout_scatter = go.Layout(title=str(exp)+' by '+str(var), xaxis=dict(title=str(var),showgrid=True),yaxis=dict(title=str(exp),showgrid=True))
     # Bar Plot:
     df_refugees_1 = df_refugees.loc[df_refugees['Country Name'] == country]
