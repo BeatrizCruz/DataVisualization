@@ -125,6 +125,7 @@ app.layout = html.Div([
     html.Div([
 
         html.Div([dcc.Graph(id='scatter_graph')], className='column4 pretty'),
+
         html.Div([dcc.Graph(id='bar_graph')], className='column4 pretty')
 
     ], className='row')

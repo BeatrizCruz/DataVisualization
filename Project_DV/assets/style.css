@@ -7,12 +7,14 @@ body {
 h1, h2, h3, h6 {
   text-align: left;
   background-color: #f9f9f9;
-  font-family: "Calibri"
+  font-family: "Calibri";
+  font-style: bold
 }
 
 h4 {
     text-align: left;
     font-family: "Calibri";
+    font-style: bold
 }
 
 h5 {
@@ -32,6 +34,10 @@ h5 {
 
 .row {
   display: flex;
+}
+
+.row50{
+flex:50%;
 }
 
 .column10 {
@@ -81,7 +87,7 @@ h5 {
   margin-left:5px;
   margin-right: 10px;
   padding: 5px;
-  box-shadow: 2px 2px 2px lightgrey;
+  box-shadow: 2px 2px 2px lightgrey
 }
 
 .text{
@@ -94,3 +100,7 @@ h5 {
     font-family: "Calibri";
 }
 
+
+.bold{
+    font-style: bold;
+    }
