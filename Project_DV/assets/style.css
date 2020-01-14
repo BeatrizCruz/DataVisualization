@@ -4,12 +4,21 @@ body {
 }
 
 
-h1, h2, h3, h6 {
+h1, h6 {
   text-align: left;
   background-color: #f9f9f9;
   font-family: "Calibri";
   font-style: bold
 }
+
+h3, h2 {
+  text-align: left;
+  background-color: white;
+  font-family: "Calibri";
+  font-style: bold
+}
+
+
 
 h4 {
     text-align: left;
@@ -31,6 +40,16 @@ h5 {
   padding: 15px;
   box-shadow: 2px 2px 2px lightgrey;
 }
+
+
+
+.info {
+    border: 1px solid lightgrey;
+    padding: 15px;
+    background-color: white;
+}
+
+
 
 .row {
   display: flex;

@@ -2,11 +2,13 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import dash.dependencies
 import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.io as pio
-import dash_dangerously_set_inner_html
+import math
+#import dash_dangerously_set_inner_html
 # Import data set:
 df_refugees = pd.read_csv('data/refugees.csv')
 country_options = [dict(label=country, value=country) for country in df_refugees['Country Name'].unique()]
@@ -33,45 +35,47 @@ app.layout = html.Div([
                             dcc.Tabs(id='tabs_info',
                                      value='tab_1',
                                      children=[
-                                         dcc.Tab(label='Initial Considerations', value='tab_1', children=[
-                                             html.Div([
-                                                 html.H2('Why does this topic matter?')], className='titleLeft'),
-                                             html.Div([
-                                                          '“There are many reasons why people around the globe seek to rebuild their lives in a different country. Some people leave home to get a job or an education. Others are forced to flee persecution or human rights violations such as torture. Millions flee from armed conflicts or other crises or violence. Some no longer feel safe and might have been targeted just because of who they are or what they do or believe – for example, for their ethnicity, religion, sexuality or political opinions.'],
-                                                      className='text'),
+                                         dcc.Tab(label='Initial Considerations', value='tab_1', className= 'info', children=[
+                                            html.Div([
+                                                 html.Div([
+                                                     html.H2('Why does this topic matter?')], className='titleLeft'),
+                                                 html.Div([
+                                                              '“There are many reasons why people around the globe seek to rebuild their lives in a different country. Some people leave home to get a job or an education. Others are forced to flee persecution or human rights violations such as torture. Millions flee from armed conflicts or other crises or violence. Some no longer feel safe and might have been targeted just because of who they are or what they do or believe – for example, for their ethnicity, religion, sexuality or political opinions.'],
+                                                          className='text'),
 
-                                             html.Div([html.H2('Who is a refugee?')], className='titleLeft'),
-                                             html.Div(
-                                                 [
-                                                     'A refugee is a person who has fled their own country because they are at risk of serious human rights violations and persecution there. The risks to their safety and life were so great that they felt they had no choice but to leave and seek safety outside their country because their own government cannot or will not protect them from those dangers.'
-                                                 ], className='text'),
+                                                 html.Div([html.H2('Who is a refugee?')], className='titleLeft'),
+                                                 html.Div(
+                                                     [
+                                                         'A refugee is a person who has fled their own country because they are at risk of serious human rights violations and persecution there. The risks to their safety and life were so great that they felt they had no choice but to leave and seek safety outside their country because their own government cannot or will not protect them from those dangers.'
+                                                     ], className='text'),
 
-                                             html.Div([html.H2('Who is an asylum-seeker?')], className='titleLeft'),
-                                             html.Div(
-                                                 [
-                                                     'An asylum-seeker is a person who has left their country and is seeking protection from persecution and serious human rights violations in another country, but who hasn’t yet been legally recognized as a refugee and is waiting to receive a decision on their asylum claim.'
-                                                 ], className='text')
-
+                                                 html.Div([html.H2('Who is an asylum-seeker?')], className='titleLeft'),
+                                                 html.Div(
+                                                     [
+                                                         'An asylum-seeker is a person who has left their country and is seeking protection from persecution and serious human rights violations in another country, but who hasn’t yet been legally recognized as a refugee and is waiting to receive a decision on their asylum claim.'
+                                                     ], className='text')
+                                            ], className='info'),
                                          ]),
-                                         dcc.Tab(label='Data Information', value='tab_2', children=[
-                                             html.Div([html.H2('What is this this app about?')], className='titleLeft'),
-                                             html.Div(
-                                                 [
-                                                     "Our objective with the development of this app was to, first of all, present information about the amount of refugees leaving and arriving on each country over the years (from 2009 to 2016). Secondly, we intended to explain refugees' movements through social and economic variables. We found that an interactive visualization would be the best option to represent all this information in a simple and effective way."
-                                                 ], className='text'),
-                                             html.H2('Movement Variables:'),
-                                             html.H2(
-                                                 '- Refugee population (by country of origin): Number of refugees leaving each country.'),
-                                             html.H2('- Refugee population (by country of asylum): '),
-                                             html.Div(
-                                                 [
-                                                     "Number of refugees arriving each country seeking for asylum."
-                                                 ], style={"textAlign": "center"}),
-                                             html.H3('Social-Economic Variables:'),
-                                             html.Div(
-                                                 [
-                                                     ""
-                                                 ], style={"textAlign": "center"})
+                                         dcc.Tab(label='Data Information', value='tab_2', className= 'info', children=[
+                                            html.Div([
+                                                 html.Div([
+                                                     html.H2('What is this this app about?')], className='titleLeft'),
+                                                     html.Div([
+                                                         "Our objective with the development of this app was to, first of all, present information about the amount of refugees leaving and arriving on each country over the years (from 2009 to 2016). Secondly, we intended to explain refugees' movements through social and economic variables. We found that an interactive visualization would be the best option to represent all this information in a simple and effective way."
+                                                     ], className='text'),
+                                                     html.H2('Movement Variables:'),
+                                                     html.H2(
+                                                        '- Refugee population (by country of origin): Number of refugees leaving each country.'
+                                                     ),
+                                                     html.H2('- Refugee population (by country of asylum): '),
+                                                     html.Div([
+                                                         "Number of refugees arriving each country seeking for asylum."
+                                                     ], style={"textAlign": "center"}),
+                                                     html.H3('Social-Economic Variables:'),
+                                                     html.Div([
+                                                         ""
+                                                     ], style={"textAlign": "center"})
+                                            ], className='info'),
                                          ]),
                                          dcc.Tab(label='Data Display Choices', value='tab_3', children=[
                                              html.Div([
@@ -92,8 +96,15 @@ app.layout = html.Div([
                                                         max=df_refugees['Year'].max(),
                                                         marks={str(i): '{}'.format(str(i)) for i in
                                                               [2009, 2010, 2011, 2012, 2013, 2014,2015,2016,2017,2018]},
-                                                        value=df_refugees['Year'].max(),
+                                                        value=df_refugees['Year'].max(), included=False,
                                                         step=1),
+                                                    html.Br(),
+                                                    html.Button('Play/Stop', id='start'),
+                                                    dcc.Interval(id='auto-stepper',
+                                                                interval=60*60*1000, # in milliseconds
+                                                                n_intervals=2008
+                                                    ),
+                                                    html.Br(),
                                                     html.Br(),
                                                     html.Label('Do you want a Linear or a Logarithmic display?'),
                                                     dcc.RadioItems(
@@ -137,21 +148,23 @@ app.layout = html.Div([
                                                     html.Br(),
 
 
-                                            ], className='column30 pretty')
+                                             ], className='column30 info')
 
-                                                 ])
+                                         ])
                                      ])
-                                ],className='column30 pretty'),
+                        ],className='column30'),
                         html.Div([
-                                dcc.Graph(id='choropleth'),
-                                dcc.Graph(id='scatter_graph')
-                                ], className='column60 pretty')
-                            ],className='pretty row'), #info
+                                dcc.Graph(id='choropleth', style={"margin-left": "15px", "border": "1px solid lightgrey"}),
+                                html.Td(style={"padding": "7px", "border": "0px"}),
+                                dcc.Graph(id='scatter_graph', style={"margin-left": "15px", "border": "1px solid lightgrey"})
+                        ], className='column60')
+                    ],className='pretty row'),
 
                     html.Div([
                         html.Div([
-
-                            html.Div([dcc.Graph(id='line_graph')], className='column60 pretty'),
+                            html.Div([
+                                html.Div([dcc.Graph(id='line_graph')], style={"border": "1px solid lightgrey"}),
+                            ], className='column60 pretty'),
                             html.Div([
                                 html.Div([html.Label(id='var_1')], className='mini boxes'),
                                 html.Div([html.Label(id='var_2')], className='mini boxes'),
@@ -168,9 +181,9 @@ app.layout = html.Div([
                                     html.Div('Ernesto'),
                                     html.Div('João Pimenta')],className='mini boxes')
                                     ], className='column20') # varios
-                                ], className='row') #row2
-                ])
-])
+                            ], className='row') #row2
+                        ])
+                    ])
 
 @app.callback(
     [
@@ -181,7 +194,7 @@ app.layout = html.Div([
         Output("var_5", "children"),
         Output("var_6", "children"),
         Output("var_7", "children"),
-        Output("var_8", "children")
+        Output("var_8", "children"),
 
     ],
     [
@@ -211,6 +224,38 @@ def indicator(countries, year):
            str(allVar_names[7])+': ' + str(value_8)\
 
 @app.callback(
+    dash.dependencies.Output('year_slider', 'value'),
+    [dash.dependencies.Input('auto-stepper', 'n_intervals')])
+
+def on_click(n_intervals):
+    if n_intervals is None:
+        return 2018
+    else:
+        if n_intervals == 2018 :
+            return 2018
+        else:
+            return (n_intervals+1)
+
+@app.callback([
+                Output('auto-stepper', 'interval'),
+                Output('auto-stepper', 'n_intervals')
+              ],
+              [
+                Input('start', 'n_clicks')
+              ])
+def start_stop_interval(start):
+    if start == None:
+        return 60*60*1000, 2008
+    else:
+        if start%2 == 1:
+            return 3*1000, 2008
+        else:
+            return 60*60*1000, 2008
+
+
+
+
+@app.callback(
     [
         Output("choropleth", "figure"),
         Output('scatter_graph','figure'),
@@ -226,15 +271,27 @@ def indicator(countries, year):
     ]
 )
 
+
 def plots(lin_log, year, var, exp, country,top_low):
+
     # Cloropleth:
+
     df_refugees_0 = df_refugees.loc[df_refugees['Year'] == year]
     if(lin_log==1):
+        z2 = df_refugees_0[var]
         z = np.log(df_refugees_0[var])
         legend = '(logarithmic scale)'
+        if var == 'Refugees per capita (by asylum country)' or var == 'Refugees per capita (by origin country)':
+            legend_val = [-14,-12,-10,-8,-6,-4,-2,0]
+            legend_text = ['-14 (' + str(math.exp(-14))+ ')',math.exp(-12),math.exp(-10),math.exp(-8),math.exp(-6),math.exp(-4),math.exp(-2), 0]
+        else:
+            legend_val = [0,2,4,6,8,10,12,14]
+            legend_text= [0,'2 (' + str(round(math.exp(2),2)) + ')','4 (' + str(round(math.exp(4),2)) + ')','6 (' + str(round(math.exp(6),2)) + ')','8 (' + str(round(math.exp(8),2)) + ')','10 (' + str(round(math.exp(10),2)) + ')','12 (' + str(round(math.exp(12),2)) + ')','14 (' + str(round(math.exp(14),2)) + ')']
     else:
         z = df_refugees_0[var]
         legend = '(linear scale)'
+        legend_val = None
+        legend_text = None
 
     if(top_low=='Top 5'):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
@@ -260,6 +317,9 @@ def plots(lin_log, year, var, exp, country,top_low):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
         countries = list(df_refugees_0.head(20)['Country Name'])
         df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+    # print(math.exp(10))
+    # tickvals = [0, 2, 4, 6, 8, 10, 12, 14],
+    # ticktext = [math.exp(0), math.exp(2), math.exp(4), math.exp(6), exp(8), exp(10), exp(12), exp(14)]
 
     data_choropleth = go.Choropleth(
                            locations=df_refugees_0['Country Name'],
@@ -286,9 +346,12 @@ def plots(lin_log, year, var, exp, country,top_low):
                            #             [0.174, 'rgb(224, 152, 36)'], [0.625, 'rgb(255, 153, 0)'], [1, 'rgb(255, 0, 0)']],
                            reversescale=True,
                            colorbar=dict(title=dict(text=str(var) + '<br>'+ legend,
-                                                    side='bottom'
+                                                    side='bottom',
                                                     ),
+                                         tickvals=legend_val,
+                                         ticktext=legend_text,
                                          x=-0.12, xanchor='left'), #, , xref="container"
+
 
                            hovertemplate='Country: %{text} <br>' + str(var) + ': %{z}',
                            name=''
@@ -297,8 +360,10 @@ def plots(lin_log, year, var, exp, country,top_low):
     layout_choropleth = go.Layout(#height=450,
                                   #width=900,
                                   geo={'showframe':False, 'projection':{'type':'equirectangular'}},
-                                  margin=go.layout.Margin(l=0, r=0, t=0, b=0)
+                                  margin=go.layout.Margin(l=0, r=0, t=0, b=0),
+
                                   )
+
     # Scatter Plot:
     data_scatter = go.Scatter(x=z,y=df_refugees_0[exp], mode='markers',text=df_refugees_0['Country Name'],
                             marker=dict(color=z, colorscale='RdYlGn', showscale=False))
@@ -314,7 +379,10 @@ def plots(lin_log, year, var, exp, country,top_low):
     line_graph.add_trace(go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[var], mode='lines', yaxis="y2", name=str(var), line=dict(color='rgb(24, 112, 24)')))
     line_graph.update_layout(yaxis2=dict(title=str(var), side="right", overlaying="y",showgrid=False), legend=dict(x=0.05, y=-.3), legend_orientation="h",hovermode='closest')
 
-    return go.Figure(data=data_choropleth, layout=layout_choropleth),\
+    fig = go.Figure(data=data_choropleth, layout=layout_choropleth)
+    fig.update_layout(xaxis_tickformat='%')
+
+    return fig,\
            go.Figure(data=data_scatter, layout=layout_scatter),\
            line_graph,
 
