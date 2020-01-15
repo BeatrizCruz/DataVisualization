@@ -390,7 +390,7 @@ def plots(lin_log, year, var, exp, country,top_low):
     elif (top_low == 'Low 10'):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False).tail(10)
     elif (top_low == 'Low 20'):
-        df_refugees_0 = df_refugees_0.loc[df_refugees_0['Year']==str(year)].sort_values(by=[var], ascending=False).tail(20)
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False).tail(20)
     # print(math.exp(10))
     # tickvals = [0, 2, 4, 6, 8, 10, 12, 14],
     # ticktext = [math.exp(0), math.exp(2), math.exp(4), math.exp(6), exp(8), exp(10), exp(12), exp(14)]
