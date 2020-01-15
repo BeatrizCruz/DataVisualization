@@ -8,9 +8,27 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.io as pio
 import math
+from decimal import Decimal
+import datetime
 #import dash_dangerously_set_inner_html
 # Import data set:
 df_refugees = pd.read_csv('data/refugees.csv')
+
+def munber_format(num):
+    num = float('{:.3g}'.format(num))
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    return '{}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
+
+def e_format(n):
+
+    return '%.1E' % Decimal(n)
+
+# App
+app = dash.Dash(__name__)
+
 country_options = [dict(label=country, value=country) for country in df_refugees['Country Name'].unique()]
 variable_names = ['GDP per capita (US$)','Population (total)', 'Health Expenditure per capita (US$)', 'Life expectancy at birth','Military expenditure per capita (US$)', 'Unemployment (% of labor force)','Education Expenditure (per capita)']
 variable_refugee = ['Refugees (asylum country)','Refugees (origin country)','Refugees per capita (by asylum country)','Refugees per capita (by origin country)']
@@ -21,8 +39,7 @@ allVar_options = [dict(label=variable, value=variable) for variable in allVar_na
 toplow_names= ['All Countries','Top 5','Top 10','Top 20','Low 5','Low 10','Low 20']
 toplow_options=[dict(label=filtertop_low, value=filtertop_low) for filtertop_low in toplow_names]
 
-# App
-app = dash.Dash(__name__)
+
 app.layout = html.Div([
 
                     html.Div([
@@ -32,159 +49,199 @@ app.layout = html.Div([
 
                     html.Div([
                         html.Div([
-                            dcc.Tabs(id='tabs_info',
-                                     value='tab_1',
-                                     children=[
-                                         dcc.Tab(label='Initial Considerations', value='tab_1', className= 'info', children=[
-                                            html.Div([
-                                                 html.Div([
-                                                     html.H2('Why does this topic matter?')], className='titleLeft'),
-                                                 html.Div([
-                                                              '“There are many reasons why people around the globe seek to rebuild their lives in a different country. Some people leave home to get a job or an education. Others are forced to flee persecution or human rights violations such as torture. Millions flee from armed conflicts or other crises or violence. Some no longer feel safe and might have been targeted just because of who they are or what they do or believe – for example, for their ethnicity, religion, sexuality or political opinions.'],
-                                                          className='text'),
-
-                                                 html.Div([html.H2('Who is a refugee?')], className='titleLeft'),
-                                                 html.Div(
-                                                     [
-                                                         'A refugee is a person who has fled their own country because they are at risk of serious human rights violations and persecution there. The risks to their safety and life were so great that they felt they had no choice but to leave and seek safety outside their country because their own government cannot or will not protect them from those dangers.'
-                                                     ], className='text'),
-
-                                                 html.Div([html.H2('Who is an asylum-seeker?')], className='titleLeft'),
-                                                 html.Div(
-                                                     [
-                                                         'An asylum-seeker is a person who has left their country and is seeking protection from persecution and serious human rights violations in another country, but who hasn’t yet been legally recognized as a refugee and is waiting to receive a decision on their asylum claim.'
-                                                     ], className='text')
-                                            ], className='info'),
-                                         ]),
-                                         dcc.Tab(label='Data Information', value='tab_2', className= 'info', children=[
-                                            html.Div([
-                                                 html.Div([
-                                                     html.H2('What is this this app about?')], className='titleLeft'),
+                            html.Div([
+                                dcc.Tabs(id='tabs_info',
+                                         value='tab_1',
+                                         children=[
+                                             dcc.Tab(label='Initial Considerations', value='tab_1', className= 'info', children=[
+                                                html.Div([
                                                      html.Div([
-                                                         "Our objective with the development of this app was to, first of all, present information about the amount of refugees leaving and arriving on each country over the years (from 2009 to 2016). Secondly, we intended to explain refugees' movements through social and economic variables. We found that an interactive visualization would be the best option to represent all this information in a simple and effective way."
-                                                     ], className='text'),
-                                                     html.H2('Movement Variables:'),
-                                                     html.H2(
-                                                        '- Refugee population (by country of origin): Number of refugees leaving each country.'
-                                                     ),
-                                                     html.H2('- Refugee population (by country of asylum): '),
+                                                         html.H2('What is this App About?')], className='titleLeft'),
                                                      html.Div([
-                                                         "Number of refugees arriving each country seeking for asylum."
-                                                     ], style={"textAlign": "center"}),
-                                                     html.H3('Social-Economic Variables:'),
+                                                         html.P([
+                                                                '"We should all be aware that there are now more than 70 million refugees and internally displaced people across the world" (Jan Egeland, Euronews). The refugee crisis we face nowadays is huge and part of it derives from the lack of attention and responsibility formed by each country around this topic. '
+                                                         ],className='text'),
+                                                         html.P([
+                                                                'The aim of this app is to give a first step towards the change of the current situation. We believe that, for people to get worried about this crisis, they first need to get informed. As visualizations are one of the best ways of representing data and transmitting it, we decided to develop this app. Therefore, this app’s objective is to present information about refugees’ movements reasons that'
+                                                         ],className='text'),
+                                                         html.P([
+                                                                'Several observations might be taken concerning this app. The number of refugees leaving and arriving each country (movement variables) is easily accessed and might be compared with different social or economic variables for all countries in different years. For a more detailed analysis, each country might be studied over time.'
+                                                         ],className='text'),
+                                                         html.P([
+                                                                'Through these observations many conclusions might be taken, such as the reasons why refugees go to specific countries or the countries that have good conditions and that could receive more refugees comparatively to the current received number.'
+                                                         ],className='text'),
+                                                     ]),
+                                                     html.Div([html.H2('Who is a refugee?')], className='titleLeft'),
                                                      html.Div([
-                                                         ""
-                                                     ], style={"textAlign": "center"})
-                                            ], className='info'),
-                                         ]),
-                                         dcc.Tab(label='Data Display Choices', value='tab_3', children=[
-                                             html.Div([
-                                                     html.H3('Map Options:'),
-                                                     html.Label('Choose a Refugee Variable:'),
-                                                     dcc.Dropdown(
-                                                         id='refugee_options',
-                                                         options=refugees_options,
-                                                         value='Refugees (asylum country)',
-                                                         multi=False,
-                                                         clearable=False),
-                                                    html.Br(),
+                                                         html.P([
+                                                             'A refugee is a person who has fled their own country because they are at risk of serious human rights violations and persecution there. The risks to their safety and life were so great that they felt they had no choice but to leave and seek safety outside their country because their own government cannot or will not protect them from those dangers.'
+                                                         ], className='text', style={"margin-bottom":"0px"}),
+                                                     ]),
+                                                ], className='info'),
+                                             ]),
+                                             dcc.Tab(label='Data Information', value='tab_2', className= 'info', children=[
+                                                html.Div([
+                                                     html.Div([
+                                                         html.P([
+                                                             "All variables used on this app were taken from the World Bank. On this app, we use variables related with refugees’ movements and social- economic variables. All the used variables are from 2009 until 2018. "
+                                                         ], className='text'),
+                                                         html.H3(['Movement Variables'], className='titleLeft'),
+                                                         html.P([
+                                                             "Refugee population (asylum): refugee population by country of asylum. Refugees under international protocols (asylum seekers are excluded). Country of asylum is the country where an asylum claim was filed and granted."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "Refugee population (origin): refugee population by country of origin. Country of origin generally refers to the nationality or country of citizenship of a claimant."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "Refugee population (asylum) per capita: Refugee population (asylum) divided by the total population number."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "Refugee population (origin) per capita: same as Refugee population (origin) divided by the total population number."
+                                                         ], className='text'),
+                                                         html.H3(['Social- Economical Variables:'], className='titleLeft'),
+                                                         html.P([
+                                                             "Population (total): total population is based on the de facto definition of population, which counts all residents regardless of legal status or citizenship."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "GDP per capita: Gross Domestic Product divided by midyear population. GDP is the sum of gross value added by all resident producers in the economy plus any product taxes and minus any subsidies not included in the value of the products. (US dollars)."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "Health Expenditure per capita: current expenditures on health per capita. Estimates of current health expenditures include healthcare goods and services consumed during each year. (US dollars)."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "Life expectancy at birth: The number of years a new born infant would live if prevailing patterns of mortality at the time of its birth were to stay the same throughout its life."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "Military expenditure per capita: Sum of capital expenditures on the armed forces, defense ministries and agencies, paramilitary forces, etc. Divided by the country's population. (US dollars)."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "Unemployment per capita: unemployment refers to the share of the labor force that is without work but available for and seeking employment. Divided by the country's population."
+                                                         ], className='text'),
+                                                         html.P([
+                                                             "Government expenditure on education: data may refer to spending by the ministry on education only. Divided by the country's population. (US dollars)"
+                                                         ], className='text'),
+                                                     ]),
+                                                ], className='info'),
+                                             ]),
+                                             dcc.Tab(label='Data Display Choices', value='tab_3', children=[
+                                                 html.Div([
+                                                         html.H3('Map Options:'),
+                                                         html.Label('Choose a Refugee Variable:'),
+                                                         dcc.Dropdown(
+                                                             id='refugee_options',
+                                                             options=refugees_options,
+                                                             value='Refugees (asylum country)',
+                                                             multi=False,
+                                                             clearable=False),
+                                                        html.Br(),
 
-                                                    html.Label('Year Slider'),
-                                                    dcc.Slider(
-                                                        id='year_slider',
-                                                        min=df_refugees['Year'].min(),
-                                                        max=df_refugees['Year'].max(),
-                                                        marks={str(i): '{}'.format(str(i)) for i in
-                                                              [2009, 2010, 2011, 2012, 2013, 2014,2015,2016,2017,2018]},
-                                                        value=df_refugees['Year'].max(), included=False,
-                                                        step=1),
-                                                    html.Br(),
-                                                    html.Button('Play/Stop', id='start'),
-                                                    dcc.Interval(id='auto-stepper',
-                                                                interval=60*60*1000, # in milliseconds
-                                                                n_intervals=2008
-                                                    ),
-                                                    html.Br(),
-                                                    html.Br(),
-                                                    html.Label('Do you want a Linear or a Logarithmic display?'),
-                                                    dcc.RadioItems(
-                                                        id='lin_log',
-                                                        options=[dict(label='Linear', value=0), dict(label='log', value=1)],
-                                                        value=1, labelStyle={'display': 'inline-block'}),
-                                                    html.Br(),
+                                                        html.Label('Year Slider'),
+                                                        dcc.Slider(
+                                                            id='year_slider',
+                                                            min=df_refugees['Year'].min(),
+                                                            max=df_refugees['Year'].max(),
+                                                            marks={str(i): '{}'.format(str(i)) for i in
+                                                                  [2009, 2010, 2011, 2012, 2013, 2014,2015,2016,2017,2018]},
+                                                            value=df_refugees['Year'].max(), included=False,
+                                                            step=1),
+                                                        html.Br(),
+                                                        html.Button('Play/Stop', id='start', style={"width": "100%"}),
+                                                        dcc.Interval(id='auto-stepper',
+                                                                    interval=60*60*1000, # in milliseconds
+                                                                    n_intervals=2008
+                                                        ),
+                                                        html.Br(),
+                                                        html.Br(),
+                                                        html.Label('Do you want a Linear or a Logarithmic display?'),
+                                                        dcc.RadioItems(
+                                                            id='lin_log',
+                                                            options=[dict(label='Linear', value=0), dict(label='log', value=1)],
+                                                            value=1, labelStyle={'display': 'inline-block'}),
+                                                        html.Br(),
 
-                                                    html.Label('Do you want to filter by top/ low valued countries?'),
-                                                    dcc.Dropdown(
-                                                        id='toplow_options',
-                                                        options=toplow_options,
-                                                        value='All Countries',
-                                                        multi=False,
-                                                        clearable=False
-                                                    ),
-                                                    html.Br(),
+                                                        html.Label('Do you want to filter by top/ low valued countries?'),
+                                                        dcc.Dropdown(
+                                                            id='toplow_options',
+                                                            options=toplow_options,
+                                                            value='All Countries',
+                                                            multi=False,
+                                                            clearable=False
+                                                        ),
+                                                        html.Br(),
 
-                                                    html.H4('Scatter plot Options:'),
+                                                        html.H4('Scatter plot Options:'),
 
-                                                    html.Label('Choose a Social-economical Variable:'),
-                                                    dcc.Dropdown(
-                                                        id='exp_options',
-                                                        options=variable_options,
-                                                        value='GDP per capita (US$)',
-                                                        multi=False,
-                                                        clearable=False
-                                                   ),
+                                                        html.Label('Choose a Social-economical Variable:'),
+                                                        dcc.Dropdown(
+                                                            id='exp_options',
+                                                            options=variable_options,
+                                                            value='GDP per capita (US$)',
+                                                            multi=False,
+                                                            clearable=False
+                                                        ),
 
-                                                    html.Br(),
+                                                        html.Br(),
 
-                                                    html.H4('Line plot Options:'),
+                                                        html.H4('Line plot Options:'),
 
-                                                    html.Label('Country Choice'),
-                                                    dcc.Dropdown(
-                                                        id='country_drop',
-                                                        options=country_options,
-                                                        value='Portugal',
-                                                        multi=False,
-                                                        clearable=False),
-                                                    html.Br(),
+                                                        html.Label('Country Choice'),
+                                                        dcc.Dropdown(
+                                                            id='country_drop',
+                                                            options=country_options,
+                                                            value='Portugal',
+                                                            multi=False,
+                                                            clearable=False),
+                                                        html.Br(),
+                                                        html.Button('Refresh', id='refresh', style={"width": "100%"}),
+                                                        html.P(id='time_refresh', style={"font-size": "10px", "margin-left":"1px", "margin-top":"3px"})
 
 
-                                             ], className='column30 info')
+                                                 ], className='column30 info')
 
+                                             ])
                                          ])
-                                     ])
-                        ],className='column30'),
+                            ]),
+
+                        ],className='column30 pretty'),
                         html.Div([
-                                dcc.Graph(id='choropleth', style={"margin-left": "15px", "border": "1px solid lightgrey"}),
-                                html.Td(style={"padding": "7px", "border": "0px"}),
-                                dcc.Graph(id='scatter_graph', style={"margin-left": "15px", "border": "1px solid lightgrey"})
-                        ], className='column60')
-                    ],className='pretty row'),
+                            html.Div([
+                                    dcc.Graph(id='choropleth', style={"border": "1px solid lightgrey"}),
+                                    html.Td(style={"padding": "7px", "border": "0px"}),
+                                    dcc.Graph(id='scatter_graph', style={"border": "1px solid lightgrey"})
+                            ]),
+                        ],className='column60 pretty'),
+                    ],className='row'),
+
+
+
 
                     html.Div([
+                        html.Div([dcc.Graph(id='line_graph', style={"border": "1px solid lightgrey"})], className='column60 pretty'),
                         html.Div([
-                            html.Div([
-                                html.Div([dcc.Graph(id='line_graph')], style={"border": "1px solid lightgrey"}),
-                            ], className='column60 pretty'),
-                            html.Div([
-                                html.Div([html.Label(id='var_1')], className='mini boxes'),
-                                html.Div([html.Label(id='var_2')], className='mini boxes'),
-                                html.Div([html.Label(id='var_3')], className='mini boxes'),
-                                html.Div([html.Label(id='var_4')], className='mini boxes'),
-                                html.Div([html.Label(id='var_5')], className='mini boxes'),
-                                html.Div([html.Label(id='var_6')], className='mini boxes'),
-                                html.Div([html.Label(id='var_7')], className='mini boxes'),
-                                html.Div([html.Label(id='var_8')], className='mini boxes'),
-                                html.Div([
-                                    html.P(['A Project done by:'],className='bold'),
-                                    html.Div('Ana Oliveira'),
-                                    html.Div('Beatriz Cruz'),
-                                    html.Div('Ernesto'),
-                                    html.Div('João Pimenta')],className='mini boxes')
-                                    ], className='column20') # varios
-                            ], className='row') #row2
-                        ])
-                    ])
+                            html.Div([html.Label(id='var_1')], className='mini boxes'),
+                            html.Div([html.Label(id='var_2')], className='mini boxes'),
+                            html.Div([html.Label(id='var_3')], className='mini boxes'),
+                            html.Div([html.Label(id='var_4')], className='mini boxes'),
+                            html.Div([html.Label(id='var_5')], className='mini boxes'),
+                            html.Div([html.Label(id='var_6')], className='mini boxes'),
+                            html.Div([html.Label(id='var_7')], className='mini boxes'),
+                            html.Div([html.Label(id='var_8')], className='mini boxes', style={"margin-bottom": "0px"}),
+                            # html.Div([
+                            #     html.P(['A Project done by:'],className='bold'),
+                            #     html.Div('Ana Oliveira'),
+                            #     html.Div('Beatriz Cruz'),
+                            #     html.Div('Ernesto'),
+                            #     html.Div('João Pimenta')
+                            # ],className='mini boxes')
+                        ], className='column20'), # varios
+                    ], className='row'),
+                    html.Img(src=app.get_asset_url('image1.jpeg'), style={"width": "100%"})
+                ])
 
+
+
+
+#
 @app.callback(
     [
         Output("var_1", "children"),
@@ -223,6 +280,7 @@ def indicator(countries, year):
            str(allVar_names[6])+': ' + str(value_7),\
            str(allVar_names[7])+': ' + str(value_8)\
 
+#Run slider
 @app.callback(
     dash.dependencies.Output('year_slider', 'value'),
     [dash.dependencies.Input('auto-stepper', 'n_intervals')])
@@ -231,11 +289,12 @@ def on_click(n_intervals):
     if n_intervals is None:
         return 2018
     else:
-        if n_intervals == 2018 :
-            return 2018
+        if n_intervals == 2018:
+            return 2018-1
         else:
             return (n_intervals+1)
 
+#Start and Stop sliders
 @app.callback([
                 Output('auto-stepper', 'interval'),
                 Output('auto-stepper', 'n_intervals')
@@ -248,13 +307,13 @@ def start_stop_interval(start):
         return 60*60*1000, 2008
     else:
         if start%2 == 1:
-            return 3*1000, 2008
+            return 2*1000, 2008
         else:
             return 60*60*1000, 2008
 
 
 
-
+#refresh plots
 @app.callback(
     [
         Output("choropleth", "figure"),
@@ -283,10 +342,10 @@ def plots(lin_log, year, var, exp, country,top_low):
         legend = '(logarithmic scale)'
         if var == 'Refugees per capita (by asylum country)' or var == 'Refugees per capita (by origin country)':
             legend_val = [-14,-12,-10,-8,-6,-4,-2,0]
-            legend_text = ['-14 (' + str(math.exp(-14))+ ')',math.exp(-12),math.exp(-10),math.exp(-8),math.exp(-6),math.exp(-4),math.exp(-2), 0]
+            legend_text = ['-14 (' + e_format(math.exp(-14))+ ')','-12 (' + e_format(math.exp(-12))+ ')','-10 (' + e_format(math.exp(-10))+ ')','-8 (' + e_format(math.exp(-8))+ ')','-6 (' + e_format(math.exp(-6))+ ')','-4 (' + e_format(math.exp(-4))+ ')','-2 (' + e_format(math.exp(-2))+ ')', 0]
         else:
             legend_val = [0,2,4,6,8,10,12,14]
-            legend_text= [0,'2 (' + str(round(math.exp(2),2)) + ')','4 (' + str(round(math.exp(4),2)) + ')','6 (' + str(round(math.exp(6),2)) + ')','8 (' + str(round(math.exp(8),2)) + ')','10 (' + str(round(math.exp(10),2)) + ')','12 (' + str(round(math.exp(12),2)) + ')','14 (' + str(round(math.exp(14),2)) + ')']
+            legend_text= [0,'2 (' + munber_format(round(math.exp(2),0)) + ')','4 (' + munber_format(round(math.exp(4),0)) + ')','6 (' + munber_format(round(math.exp(6),0)) + ')','8 (' + munber_format(round(math.exp(8),0)) + ')','10 (' + munber_format(round(math.exp(10),0)) + ')','12 (' + munber_format(round(math.exp(12),0)) + ')','14 (' + munber_format(round(math.exp(14),0)) + ')']
     else:
         z = df_refugees_0[var]
         legend = '(linear scale)'
@@ -372,11 +431,11 @@ def plots(lin_log, year, var, exp, country,top_low):
     # Bar Plot:
     df_refugees_1 = df_refugees.loc[df_refugees['Country Name'] == country]
 
-    data_line = go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[exp],mode='lines', name=str(exp), line=dict(color='rgb(201, 18, 18)'))
+    data_line = go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[exp],mode='lines+markers', name=str(exp), line=dict(color='rgb(201, 18, 18)'))
     layout_line = go.Layout(title=str(exp) + ' over years on '+country,  xaxis=dict(title='Year',showgrid=True), yaxis=dict(title=str(exp),showgrid=True),template=pio.templates['ggplot2'])
     line_graph = go.Figure(data=data_line, layout=layout_line)
 
-    line_graph.add_trace(go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[var], mode='lines', yaxis="y2", name=str(var), line=dict(color='rgb(24, 112, 24)')))
+    line_graph.add_trace(go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[var], mode='lines+markers', yaxis="y2", name=str(var), line=dict(color='rgb(24, 112, 24)')))
     line_graph.update_layout(yaxis2=dict(title=str(var), side="right", overlaying="y",showgrid=False), legend=dict(x=0.05, y=-.3), legend_orientation="h",hovermode='closest')
 
     fig = go.Figure(data=data_choropleth, layout=layout_choropleth)
@@ -385,6 +444,19 @@ def plots(lin_log, year, var, exp, country,top_low):
     return fig,\
            go.Figure(data=data_scatter, layout=layout_scatter),\
            line_graph,
+
+#refresh Datafram
+@app.callback(
+    # i'm imagining output as a hidden div, could be a dcc.Store or even user visible element
+    Output("time_refresh", "children"),
+    [Input("refresh", "n_clicks")],  # if refresh-data is a button maybe you want n_clicks not value?
+)
+def refresh_data(n_clicks):
+    global df_refugees
+    df_refugees = pd.DataFrame()
+    df_refugees = pd.read_csv('data/refugees.csv')
+
+    return 'Last dataset update: ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 if __name__ == '__main__':
