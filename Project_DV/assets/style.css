@@ -1,8 +1,11 @@
 body {
 
-  background-image: url("/assets/image3.jpg");
+  background-image: url("/assets/image1.jpeg");
   background-repeat: no-repeat;
   background-size: 100%;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;}
   margin: 5%;
 }
 
@@ -51,6 +54,7 @@ h5 {
     border: 1px solid lightgrey;
     padding: 15px;
     background-color: white;
+    margin-bottom:0px
 }
 
 
@@ -99,19 +103,19 @@ flex:50%;
 }
 
 .mini {
-  flex: 20%;
+  flex: 10%;
   font-size:15px;
 }
 
 .boxes {
   border-radius: 5px;
-  background-color: #f9f9f9;
+  background-color: white;
   margin-top:10px;
   margin-bottom: 20px;
   margin-left:5px;
   margin-right: 10px;
-  padding: 9px;
-  box-shadow: 2px 2px 2px lightgrey
+  padding: 6px;
+  box-shadow: 2px 2px 2px white
 }
 
 .text{
@@ -122,9 +126,10 @@ flex:50%;
 .titleLeft{
     text-align: left;
     font-family: "Calibri";
+
 }
 
 
 .bold{
     font-style: bold;
-    }
+}
