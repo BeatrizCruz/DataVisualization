@@ -310,7 +310,6 @@ def indicator(countries, year):
 def on_click(n_intervals):
     if n_intervals >= 2018:
         n_intervals = 2017
-    print(n_intervals)
     if n_intervals is None:
         return 2018
     else:
@@ -381,29 +380,17 @@ def plots(lin_log, year, var, exp, country,top_low):
 
 
     if(top_low=='Top 5'):
-        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
-        countries = list(df_refugees_0.head(5)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False).head(5)
     elif(top_low=='Top 10'):
-        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
-        countries = list(df_refugees_0.head(10)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False).head(10)
     elif(top_low=='Top 20'):
-        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
-        countries = list(df_refugees_0.head(20)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False).head(20)
     elif(top_low == 'Low 5'):
-        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
-        countries = list(df_refugees_0.head(5)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False).tail(5)
     elif (top_low == 'Low 10'):
-        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
-        countries = list(df_refugees_0.head(10)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False).tail(10)
     elif (top_low == 'Low 20'):
-        df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
-        countries = list(df_refugees_0.head(20)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0.loc[df_refugees_0['Year']==str(year)].sort_values(by=[var], ascending=False).tail(20)
     # print(math.exp(10))
     # tickvals = [0, 2, 4, 6, 8, 10, 12, 14],
     # ticktext = [math.exp(0), math.exp(2), math.exp(4), math.exp(6), exp(8), exp(10), exp(12), exp(14)]
@@ -436,13 +423,12 @@ def plots(lin_log, year, var, exp, country,top_low):
                                   )
 
     # Scatter Plot:
-    data_scatter = go.Scatter(x=z,y=df_refugees_0[exp], mode='markers',text=df_refugees_0['Country Name'],
-                            marker=dict(color=z, colorscale='RdYlGn', showscale=False))
+    data_scatter = go.Scatter(x=df_refugees_0[var], y=df_refugees_0[exp], mode='markers',text=df_refugees_0['Country Name'],
+                            marker=dict(color=z, colorscale='RdYlGn', reversescale=True, showscale=False))
 
     layout_scatter = go.Layout(title=str(exp)+' by '+str(var), xaxis=dict(title=str(var),showgrid=True),yaxis=dict(title=str(exp),showgrid=True),template=pio.templates['ggplot2'])
     # Bar Plot:
     df_refugees_1 = df_refugees.loc[df_refugees['Country Name'] == country]
-
     data_line = go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[exp],mode='lines+markers', name=str(exp), line=dict(color='rgb(201, 18, 18)'))
     layout_line = go.Layout(title=str(exp) + ' over years on '+country,  xaxis=dict(title='Year',showgrid=True), yaxis=dict(title=str(exp),showgrid=True),template=pio.templates['ggplot2'])
     line_graph = go.Figure(data=data_line, layout=layout_line)
