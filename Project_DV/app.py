@@ -27,7 +27,11 @@ def e_format(n):
     return '%.1E' % Decimal(n)
 
 # App
+
 app = dash.Dash(__name__)
+
+
+server = app.server
 
 country_options = [dict(label=country, value=country) for country in df_refugees['Country Name'].unique()]
 variable_names = ['GDP per capita (US$)','Population (total)', 'Health Expenditure per capita (US$)', 'Life expectancy at birth','Military expenditure per capita (US$)', 'Unemployment (% of labor force)','Education Expenditure (per capita)']
