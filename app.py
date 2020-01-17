@@ -80,7 +80,7 @@ app.layout = html.Div([
                                                          ], className='text', style={"margin-bottom":"55px"}),
                                                      ]),
                                                      html.Div([
-                                                        html.P(['A Project done by: Ana Oliveira, Beatriz Cruz, Ernesto, João Pimenta']),
+                                                        html.P(['A Project done by: Ana Oliveira, Beatriz Cruz, Ernesto Aguilar, João Pimenta']),
                                                         dcc.Link('Click here for more information about refugees and if you want to help ', href='https://www.amnesty.org/en/what-we-do/refugees-asylum-seekers-and-migrants/')
                                                      ],style={"font-size":"10px", "margin-bottom":"0px"}),
                                                 ], className='info'),
