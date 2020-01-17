@@ -426,7 +426,7 @@ def plots(lin_log, year, var, exp, country,top_low):
     data_scatter = go.Scatter(x=df_refugees_0[var], y=df_refugees_0[exp], mode='markers',text=df_refugees_0['Country Name'],
                             marker=dict(color=z, colorscale='RdYlGn', reversescale=True, showscale=False))
 
-    layout_scatter = go.Layout(title=str(exp)+' by '+str(var), xaxis=dict(title=str(var),showgrid=True),yaxis=dict(title=str(exp),showgrid=True),template=pio.templates['ggplot2'])
+    layout_scatter = go.Layout(title=str(exp)+' by '+str(var), xaxis=dict(title=str(var),showgrid=True, range=[df_refugees[var].min(),df_refugees[var].max()]),yaxis=dict(title=str(exp),showgrid=True,range=[df_refugees[exp].min(),df_refugees[exp].max()]),template=pio.templates['ggplot2'])
     # Bar Plot:
     df_refugees_1 = df_refugees.loc[df_refugees['Country Name'] == country]
     data_line = go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[exp],mode='lines+markers', name=str(exp), line=dict(color='rgb(201, 18, 18)'))

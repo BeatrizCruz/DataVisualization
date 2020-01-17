@@ -27,54 +27,81 @@ def e_format(n):
     return '%.1E' % Decimal(n)
 
 # App
-
 app = dash.Dash(__name__)
-
-
 server = app.server
 
+
 country_options = [dict(label=country, value=country) for country in df_refugees['Country Name'].unique()]
-variable_names = ['GDP per capita (US$)','Population (total)', 'Health Expenditure per capita (US$)', 'Life expectancy at birth','Military expenditure per capita (US$)', 'Unemployment (% of labor force)','Education Expenditure (per capita)']
-variable_refugee = ['Refugees (asylum country)','Refugees (origin country)','Refugees per capita (by asylum country)','Refugees per capita (by origin country)']
-allVar_names=['Refugees (asylum country)','Refugees (origin country)','GDP per capita (US$)', 'Population (total)', 'Health Expenditure per capita (US$)', 'Life expectancy at birth','Military expenditure per capita (US$)', 'Unemployment (% of labor force)','Education Expenditure (per capita)']
+variable_names = ['GDP per capita (US$)',
+                  'Population (total)',
+                  'Health Expenditure per capita (US$)',
+                  'Life expectancy at birth',
+                  'Military expenditure per capita (US$)',
+                  'Unemployment (% of labor force)',
+                  'Education Expenditure (per capita)']
+variable_refugee = ['Refugees (asylum country)',
+                    'Refugees (origin country)',
+                    'Refugees per capita (by asylum country)',
+                    'Refugees per capita (by origin country)']
+allVar_names = ['Refugees (asylum country)',
+                'Refugees (origin country)',
+                'GDP per capita (US$)',
+                'Population (total)',
+                'Health Expenditure per capita (US$)',
+                'Life expectancy at birth',
+                'Military expenditure per capita (US$)',
+                'Unemployment (% of labor force)',
+                'Education Expenditure (per capita)']
 variable_options = [dict(label=variable, value=variable) for variable in variable_names]
 refugees_options = [dict(label=variable, value=variable) for variable in variable_refugee]
 allVar_options = [dict(label=variable, value=variable) for variable in allVar_names]
-toplow_names= ['All Countries','Top 5','Top 10','Top 20','Low 5','Low 10','Low 20']
-toplow_options=[dict(label=filtertop_low, value=filtertop_low) for filtertop_low in toplow_names]
-
+toplow_names = ['All Countries', 'Top 5', 'Top 10', 'Top 20', 'Low 5', 'Low 10', 'Low 20']
+toplow_options = [dict(label=filtertop_low, value=filtertop_low) for filtertop_low in toplow_names]
 
 app.layout = html.Div([
+########################################################################################################################
+# -------------------------------------------- 1st row -----------------------------------------------------------------
+########################################################################################################################
 
                     html.Div([
                         html.H1(['Refugees, a Reality that Must be Faced and Understood'], style={"font-family":"Verdana"}),
                         html.H4('"Every day, all over the world, people make one of the most difficult decisions in their lives: to leave their homes in search of a safer, better life."')
                     ], className='pretty'), #title
 
+########################################################################################################################
+# -------------------------------------------- 2nd row -----------------------------------------------------------------
+########################################################################################################################
+
                     html.Div([
                         html.Div([
                             html.Div([
+                                #########################################################
+                                # -------------------- 1st Tab --------------------------
+                                #########################################################
                                 dcc.Tabs(id='tabs_info',
                                          value='tab_1',
                                          children=[
-                                             dcc.Tab(label='Initial Considerations', value='tab_1', className= 'info', children=[
-                                                html.Div([
-                                                     html.Div([
-                                                         html.H2('What is this App About?')], className='titleLeft'),
-                                                     html.Div([
-                                                         html.P([
+                                             dcc.Tab(label='Initial Considerations',
+                                                     value='tab_1',
+                                                     className='info',
+                                                     children=[
+                                                         html.Div([
+                                                             html.Div([
+                                                                 html.H2('What is this App About?')], className='titleLeft'),
+                                                             html.Div([
+                                                                 html.P([
                                                                 '"We should all be aware that there are now more than 70 million refugees and internally displaced people across the world" (Jan Egeland, Euronews). The refugee crisis we face nowadays is huge and part of it derives from the lack of attention and responsibility formed by each country around this topic. '
-                                                         ],className='text'),
-                                                         html.P([
+                                                                 ], className='text'),
+                                                                 html.P([
                                                                 'The aim of this app is to give a first step towards the change of the current situation. We believe that, for people to get worried about this crisis, they first need to get informed. As visualizations are one of the best ways of representing data and transmitting it, we decided to develop this app. Therefore, this app’s objective is to present information about refugees’ movements reasons that'
-                                                         ],className='text'),
-                                                         html.P([
+                                                                 ], className='text'),
+                                                                html.P([
                                                                 'Several observations might be taken concerning this app. The number of refugees leaving and arriving each country (movement variables) is easily accessed and might be compared with different social or economic variables for all countries in different years. For a more detailed analysis, each country might be studied over time.'
-                                                         ],className='text'),
-                                                         html.P([
+                                                                ], className='text'),
+                                                                html.P([
                                                                 'Through these observations many conclusions might be taken, such as the reasons why refugees go to specific countries or the countries that have good conditions and that could receive more refugees comparatively to the current received number.'
-                                                         ],className='text'),
-                                                     ]),
+                                                                ], className='text'),
+                                                             ]),
                                                      html.Div([html.H2('Who is a refugee?')], className='titleLeft'),
                                                      html.Div([
                                                          html.P([
@@ -82,12 +109,18 @@ app.layout = html.Div([
                                                          ], className='text', style={"margin-bottom":"55px"}),
                                                      ]),
                                                      html.Div([
-                                                        html.P(['A Project done by: Ana Oliveira, Beatriz Cruz, Ernesto, João Pimenta']),
+                                                        html.P(['A Project done by: Ana Oliveira, Beatriz Cruz, Ernesto Aguilar, João Pimenta']),
                                                         dcc.Link('Click here for more information about refugees and if you want to help ', href='https://www.amnesty.org/en/what-we-do/refugees-asylum-seekers-and-migrants/')
-                                                     ],style={"font-size":"10px", "margin-bottom":"0px"}),
+                                                     ], style={"font-size":"10px", "margin-bottom":"0px"}),
                                                 ], className='info'),
                                              ]),
-                                             dcc.Tab(label='Data Information', value='tab_2', className= 'info', children=[
+                                             #########################################################
+                                             # -------------------- 2nd Tab --------------------------
+                                             #########################################################
+                                             dcc.Tab(label='Data Information',
+                                                     value='tab_2',
+                                                     className='info',
+                                                     children=[
                                                 html.Div([
                                                      html.Div([
                                                          html.P([
@@ -131,9 +164,15 @@ app.layout = html.Div([
                                                      ]),
                                                 ], className='info'),
                                              ]),
-                                             dcc.Tab(label='Data Display Choices', value='tab_3', children=[
+                                             #########################################################
+                                             # -------------------- 3rd Tab --------------------------
+                                             #########################################################
+                                             dcc.Tab(label='Data Display Choices',
+                                                     value='tab_3',
+                                                     children=[
                                                  html.Div([
                                                          html.H3('Map Options'),
+                                                        # ------------------- Dropdown refugee ------------------------
                                                          html.Label('Choose a Refugee Variable:*\xB9 *\xB2 *\xB3'),
                                                          dcc.Dropdown(
                                                              id='refugee_options',
@@ -142,22 +181,28 @@ app.layout = html.Div([
                                                              multi=False,
                                                              clearable=False),
                                                         html.Br(),
+
+                                                        # ------------------- Dropdown refugee -------------------------
                                                         html.Label('Choose a display scale:*\xB9'),
                                                         dcc.RadioItems(
                                                             id='lin_log',
                                                             options=[dict(label='Linear', value=0), dict(label='log', value=1)],
                                                             value=1, labelStyle={'display': 'inline-block'}),
                                                         html.Br(),
+
+                                                        # --------------------- Year slider ----------------------------
                                                         html.Label('Choose a year:*\xB9 *\xB2 *\u2074'),
                                                         dcc.Slider(
                                                             id='year_slider',
                                                             min=df_refugees['Year'].min(),
                                                             max=df_refugees['Year'].max(),
                                                             marks={str(i): '{}'.format(str(i)) for i in
-                                                                  [2009, 2010, 2011, 2012, 2013, 2014,2015,2016,2017,2018]},
+                                                                  [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]},
                                                             value=df_refugees['Year'].max(), included=False,
                                                             step=1),
                                                         html.Br(),
+
+                                                        # ---------------------- Play/Stop -----------------------------
                                                         html.Button('Play/Stop', id='start', style={"width": "100%"}),
                                                         dcc.Interval(id='auto-stepper',
                                                                     interval=60*60*1000, # in milliseconds
@@ -165,6 +210,8 @@ app.layout = html.Div([
                                                         ),
                                                         html.Br(),
                                                         html.Br(),
+
+                                                        # ---------------- Top/Bottom dropdown -------------------------
                                                         html.Label('Filter by top/low country values:*\xB9 *\xB2'),
                                                         dcc.Dropdown(
                                                             id='toplow_options',
@@ -173,6 +220,8 @@ app.layout = html.Div([
                                                             multi=False,
                                                             clearable=False
                                                         ),
+
+                                                        # -------------- Socio-economic dropdown -----------------------
                                                         html.Div([
                                                            html.Td(style={"width": "700px"}),
                                                          ], style={"width": "100%"}),
@@ -185,9 +234,11 @@ app.layout = html.Div([
                                                             multi=False,
                                                             clearable=False
                                                         ),
+
+                                                        # ----------------- Country dropdown ---------------------------
                                                         html.Div([
                                                             html.Td(style={"width": "700px"}),
-                                                        ],style={"width": "100%"}),
+                                                        ], style={"width": "100%"}),
                                                         html.H3('Line plot Options'),
                                                         html.Label('Choose a country:*\xB3 *\u2074'),
                                                         dcc.Dropdown(
@@ -196,27 +247,31 @@ app.layout = html.Div([
                                                             value='Portugal',
                                                             multi=False,
                                                             clearable=False),
+
+                                                        # ----------------- Annotations with * -------------------------
                                                         html.Div([
                                                             html.Div([
-                                                                html.P(['*\xB9'], style={"margin": "0px","padding": "0px"}),
-                                                                html.P(['Changes choropleth map'],style={"margin": "2px 0px 0px 2px","font-size": "10px"}),
-                                                            ], style={"margin": "0px","padding": "0px","display": "flex"}),
+                                                                html.P(['*\xB9'], style={"margin": "0px", "padding": "0px"}),
+                                                                html.P(['Changes choropleth map'], style={"margin": "2px 0px 0px 2px","font-size": "10px"}),
+                                                            ], style={"margin": "0px", "padding": "0px", "display": "flex"}),
                                                             html.Div([
-                                                                html.P(['*\xB2'], style={"margin": "0px","padding": "0px"}),
-                                                                html.P([' Chanegs scatter plot'],style={"margin": "2px 0px 0px 2px","font-size": "10px"}),
-                                                            ], style={"margin": "0px","margin-left": "7px","padding": "0px","display": "flex"}),
+                                                                html.P(['*\xB2'], style={"margin": "0px", "padding": "0px"}),
+                                                                html.P([' Chanegs scatter plot'], style={"margin": "2px 0px 0px 2px", "font-size": "10px"}),
+                                                            ], style={"margin": "0px", "margin-left": "7px", "padding": "0px", "display": "flex"}),
                                                             html.Div([
-                                                                html.P(['*\xB3'], style={"margin": "0px","padding-bottom": "-3px"}),
-                                                                html.P([' Changes line chart'],style={"margin": "2px 0px 0px 2px","font-size": "10px"}),
-                                                            ],style={"margin": "0px","margin-left": "7px","display": "flex"}),
+                                                                html.P(['*\xB3'], style={"margin": "0px", "padding-bottom": "-3px"}),
+                                                                html.P([' Changes line chart'], style={"margin": "2px 0px 0px 2px", "font-size": "10px"}),
+                                                            ],style={"margin": "0px", "margin-left": "7px", "display": "flex"}),
                                                             html.Div([
-                                                                html.P(['*\u2074'], style={"margin": "0px","padding-bottom": "-3px"}),
+                                                                html.P(['*\u2074'], style={"margin": "0px", "padding-bottom": "-3px"}),
                                                                 html.P([' Changes info-cards'],style={"margin": "2px 0px 0px 2px","font-size": "10px"}),
-                                                            ], style={"margin": "0px","margin-left": "7px","display": "flex"}),
-                                                        ], style={"margin": "0px","padding": "0px","display": "flex"}),
+                                                            ], style={"margin": "0px", "margin-left": "7px", "display": "flex"}),
+                                                        ], style={"margin": "0px", "padding": "0px", "display": "flex"}),
                                                         html.Br(),
                                                         html.Br(),
-                                                        html.Button('Refresh', id='refresh', style={"width": "100%","font-size": "10px"}),
+
+                                                        # ------------------ Refresh button ----------------------------
+                                                        html.Button('Refresh', id='refresh', style={"width": "100%", "font-size": "10px"}),
                                                         html.P(id='time_refresh', style={"font-size": "10px", "margin-left":"1px", "margin-top":"3px"})
 
 
@@ -226,24 +281,40 @@ app.layout = html.Div([
                                          ])
                             ]),
 
-                        ],className='column30 pretty'),
+                        ], className='column30 pretty'),
                         html.Div([
                             html.Div([
+                                #########################################################
+                                # ------------------ Choropleth -------------------------
+                                #########################################################
                                 html.Div([
-                                    dcc.Graph(id='choropleth', style={"border": "1px solid lightgrey", "backgroundColor": "black"}),
+                                    dcc.Graph(id='choropleth', style={"border":"1px solid lightgrey", "backgroundColor":"black"}),
                                 ], className='pretty'),
+
+                                #########################################################
+                                # ------------------ Scatterplot ------------------------
+                                #########################################################
                                 html.Div([
                                     dcc.Graph(id='scatter_graph', style={"border": "1px solid lightgrey"})
                                 ], className='pretty'),
                             ]),
-                        ],className='column60'),
-                    ],className='row'),
+                        ], className='column60'),
+                    ], className='row'),
 
-
+########################################################################################################################
+# -------------------------------------------- 3rd row -----------------------------------------------------------------
+########################################################################################################################
 
 
                     html.Div([
+                        #########################################################
+                        # ------------------ Line chart -------------------------
+                        #########################################################
                         html.Div([dcc.Graph(id='line_graph', style={"border": "1px solid lightgrey"})], className='column60 pretty'),
+
+                        #########################################################
+                        # ------------------ Mini-boxes -------------------------
+                        #########################################################
                         html.Div([
                             html.Div([html.Label(id='var_1')], className='mini boxes'),
                             html.Div([html.Label(id='var_2')], className='mini boxes'),
@@ -341,23 +412,21 @@ def start_stop_interval(start):
 @app.callback(
     [
         Output("choropleth", "figure"),
-        Output('scatter_graph','figure'),
-        Output('line_graph','figure')
+        Output('scatter_graph', 'figure'),
+        Output('line_graph', 'figure')
     ],
     [
-        Input('lin_log','value'),
+        Input('lin_log', 'value'),
         Input("year_slider", "value"),
         Input("refugee_options", "value"),
-        Input('exp_options','value'),
-        Input('country_drop','value'),
-        Input('toplow_options','value')
+        Input('exp_options', 'value'),
+        Input('country_drop', 'value'),
+        Input('toplow_options', 'value')
     ]
 )
 
 
-def plots(lin_log, year, var, exp, country,top_low):
-
-    # Cloropleth:
+def plots(lin_log, year, var, exp, country, top_low):
 
     df_refugees_0 = df_refugees.loc[df_refugees['Year'] == year]
     if(lin_log==1):
@@ -366,11 +435,24 @@ def plots(lin_log, year, var, exp, country,top_low):
         legend = '(logarithmic scale)'
         format_hover = ': %{z:.2f}'
         if var == 'Refugees per capita (by asylum country)' or var == 'Refugees per capita (by origin country)':
-            legend_val = [-14,-12,-10,-8,-6,-4,-2,0]
-            legend_text = ['-14 (' + e_format(math.exp(-14))+ ')','-12 (' + e_format(math.exp(-12))+ ')','-10 (' + e_format(math.exp(-10))+ ')','-8 (' + e_format(math.exp(-8))+ ')','-6 (' + e_format(math.exp(-6))+ ')','-4 (' + e_format(math.exp(-4))+ ')','-2 (' + e_format(math.exp(-2))+ ')', 0]
+            legend_val = [-14, -12, -10, -8, -6, -4, -2, 0]
+            legend_text = ['-14 (' + e_format(math.exp(-14)) + ')',
+                           '-12 (' + e_format(math.exp(-12)) + ')',
+                           '-10 (' + e_format(math.exp(-10)) + ')',
+                           '-8 (' + e_format(math.exp(-8)) + ')',
+                           '-6 (' + e_format(math.exp(-6)) + ')',
+                           '-4 (' + e_format(math.exp(-4)) + ')',
+                           '-2 (' + e_format(math.exp(-2)) + ')', 0]
         else:
-            legend_val = [0,2,4,6,8,10,12,14]
-            legend_text= [0,'2 (' + munber_format(round(math.exp(2),0)) + ')','4 (' + munber_format(round(math.exp(4),0)) + ')','6 (' + munber_format(round(math.exp(6),0)) + ')','8 (' + munber_format(round(math.exp(8),0)) + ')','10 (' + munber_format(round(math.exp(10),0)) + ')','12 (' + munber_format(round(math.exp(12),0)) + ')','14 (' + munber_format(round(math.exp(14),0)) + ')']
+            legend_val = [0, 2, 4, 6, 8, 10, 12, 14]
+            legend_text = [0,
+                           '2 (' + munber_format(round(math.exp(2), 0)) + ')',
+                           '4 (' + munber_format(round(math.exp(4), 0)) + ')',
+                           '6 (' + munber_format(round(math.exp(6), 0)) + ')',
+                           '8 (' + munber_format(round(math.exp(8), 0)) + ')',
+                           '10 (' + munber_format(round(math.exp(10), 0)) + ')',
+                           '12 (' + munber_format(round(math.exp(12), 0)) + ')',
+                           '14 (' + munber_format(round(math.exp(14), 0)) + ')']
     else:
         z = df_refugees_0[var]
         legend = '(linear scale)'
@@ -382,30 +464,31 @@ def plots(lin_log, year, var, exp, country,top_low):
             format_hover = ': %{z}'
 
 
-    if(top_low=='Top 5'):
+    if(top_low == 'Top 5'):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
         countries = list(df_refugees_0.head(5)['Country Name'])
         df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
-    elif(top_low=='Top 10'):
+    elif(top_low == 'Top 10'):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
         countries = list(df_refugees_0.head(10)['Country Name'])
         df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
-    elif(top_low=='Top 20'):
+    elif(top_low == 'Top 20'):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=False)
         countries = list(df_refugees_0.head(20)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
     elif(top_low == 'Low 5'):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
         countries = list(df_refugees_0.head(5)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
     elif (top_low == 'Low 10'):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
         countries = list(df_refugees_0.head(10)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
     elif (top_low == 'Low 20'):
         df_refugees_0 = df_refugees_0.sort_values(by=[var], ascending=True)
         countries = list(df_refugees_0.head(20)['Country Name'])
-        df_refugees_0=df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+        df_refugees_0 = df_refugees_0[df_refugees_0['Country Name'].isin(countries)]
+
     # print(math.exp(10))
     # tickvals = [0, 2, 4, 6, 8, 10, 12, 14],
     # ticktext = [math.exp(0), math.exp(2), math.exp(4), math.exp(6), exp(8), exp(10), exp(12), exp(14)]
@@ -418,7 +501,7 @@ def plots(lin_log, year, var, exp, country,top_low):
                            text=df_refugees_0['Country Name'],
                            colorscale='RdYlGn',
                            reversescale=True,
-                           colorbar=dict(title=dict(text=str(var) + '<br>'+ legend,
+                           colorbar=dict(title=dict(text=str(var) + '<br>' + legend,
                                                     side='bottom',
                                                     ),
                                          tickvals=legend_val,
@@ -432,25 +515,30 @@ def plots(lin_log, year, var, exp, country,top_low):
 
     layout_choropleth = go.Layout(#height=450,
                                   #width=900,
-                                  geo={'showframe':False, 'projection':{'type':'equirectangular'}},
+                                  geo={'showframe' : False, 'projection' : {'type' : 'equirectangular'}},
                                   margin=go.layout.Margin(l=0, r=0, t=0, b=0)
 
                                   )
 
-    # Scatter Plot:
-    data_scatter = go.Scatter(x=z,y=df_refugees_0[exp], mode='markers',text=df_refugees_0['Country Name'],
-                            marker=dict(color=z, colorscale='RdYlGn', showscale=False))
+    #########################################################
+    # ----------------- Scatter plot ------------------------
+    #########################################################
+    data_scatter = go.Scatter(x=z, y=df_refugees_0[exp], mode='markers', text=df_refugees_0['Country Name'],
+                              marker=dict(color=z, colorscale='RdYlGn', showscale=False))
 
-    layout_scatter = go.Layout(title=str(exp)+' by '+str(var), xaxis=dict(title=str(var),showgrid=True),yaxis=dict(title=str(exp),showgrid=True),template=pio.templates['ggplot2'])
-    # Bar Plot:
+    layout_scatter = go.Layout(title=str(exp)+' by '+str(var), xaxis=dict(title=str(var), showgrid=True), yaxis=dict(title=str(exp), showgrid=True), template=pio.templates['ggplot2'])
+
+    #########################################################
+    # ------------------ Line plot -------------------------
+    #########################################################
     df_refugees_1 = df_refugees.loc[df_refugees['Country Name'] == country]
 
     data_line = go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[exp],mode='lines+markers', name=str(exp), line=dict(color='rgb(201, 18, 18)'))
-    layout_line = go.Layout(title=str(exp) + ' over years on '+country,  xaxis=dict(title='Year',showgrid=True), yaxis=dict(title=str(exp),showgrid=True),template=pio.templates['ggplot2'])
+    layout_line = go.Layout(title=str(exp) + ' over years on '+country,  xaxis=dict(title='Year', showgrid=True), yaxis=dict(title=str(exp), showgrid=True), template=pio.templates['ggplot2'])
     line_graph = go.Figure(data=data_line, layout=layout_line)
 
     line_graph.add_trace(go.Scatter(x=df_refugees_1['Year'].values, y=df_refugees_1[var], mode='lines+markers', yaxis="y2", name=str(var), line=dict(color='rgb(5, 71, 176)')))
-    line_graph.update_layout(yaxis2=dict(title=str(var), side="right", overlaying="y",showgrid=False), legend=dict(x=0.05, y=-.3), legend_orientation="h",hovermode='closest')
+    line_graph.update_layout(yaxis2=dict(title=str(var), side="right", overlaying="y", showgrid=False), legend=dict(x=0.05, y=-.3), legend_orientation="h", hovermode='closest')
 
     fig = go.Figure(data=data_choropleth, layout=layout_choropleth)
     fig.update_layout(xaxis_tickformat='%')
